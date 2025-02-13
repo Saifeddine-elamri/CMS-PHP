@@ -1,0 +1,91 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    color: #2c3e50;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1 {
+    text-align: center;
+    color: #34495e;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-width: 800px;
+}
+
+li {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+a {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+a:hover {
+    background: #2980b9;
+}
+
+/* Pour afficher l'image du post */
+.post-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Pour afficher l'icône PDF et le lien de téléchargement */
+.file-preview {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.pdf-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+/* Pour la zone "Aucune image disponible" */
+.no-image {
+    font-style: italic;
+    color: #bdc3c7;
+    margin-bottom: 15px;
+}

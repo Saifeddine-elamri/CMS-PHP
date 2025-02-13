@@ -1,0 +1,47 @@
+/* 404 Error Page Styles */
+.error-container {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+}
+
+.error-container h1 {
+    font-size: 3rem;
+    color: #e74c3c; /* Red for error message */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.error-container p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.error-container a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.error-container a:hover {
+    text-decoration: underline;
+}
+
+/* Container for the 404 content */
+.error-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: Add an image or illustration */
+.error-container img {
+    max-width: 300px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
