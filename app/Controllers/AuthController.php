@@ -56,7 +56,6 @@ class AuthController {
     // Méthode pour déconnecter l'utilisateur
     public function logout() {
         $this->authService->logout();
-        header('Location: /login'); // Rediriger vers la page de connexion
     }
 
     // Méthode pour afficher le formulaire d'inscription

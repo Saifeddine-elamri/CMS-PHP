@@ -18,10 +18,12 @@ h1 {
 }
 
 ul {
+    display:flex;
+    flex-wrap: wrap;
     list-style: none;
     padding: 0;
     width: 100%;
-    max-width: 800px;
+    max-width: 1200px;
 }
 
 li {
@@ -87,4 +89,27 @@ a:hover {
     font-style: italic;
     color: #bdc3c7;
     margin-bottom: 15px;
+}
+
+/* Style du bouton de suppression */
+.delete-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+
+.edit-btn
+
+{
+    margin-top: 10px;
 }

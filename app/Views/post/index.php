@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Posts</title>
-    <link rel="stylesheet" href="../public/assets/css/post.css">
+    <link rel="stylesheet" href="/public/assets/css/post.css">
+ 
+    <script>
+        // Confirmation avant suppression
+        function confirmDelete(postId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+                window.location.href = '/delete/' + postId;
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -17,8 +26,9 @@
             <li>
                 <h2><?php echo htmlspecialchars($post['title']); ?></h2>
                 <p><?php echo nl2br(htmlspecialchars($post['content'])); ?></p>
-                                <!-- Vérification pour afficher l'image ou le fichier PDF -->
-            <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') === false): ?>
+                
+                <!-- Vérification pour afficher l'image ou le fichier PDF -->
+                <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') === false): ?>
                     <!-- Affichage des images -->
                     <img src="/<?php echo htmlspecialchars($post['file_path']); ?>" alt="Image du post" class="post-image">
                 <?php elseif (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') !== false): ?>
@@ -31,7 +41,15 @@
                 <?php else: ?>
                     <div class="no-image">Aucune image ou fichier disponible</div>
                 <?php endif; ?>
-                <a href="/post/<?php echo $post['id']; ?>">Voir plus de details</a>
+                
+                <a href="/post/<?php echo $post['id']; ?>">Voir plus de détails</a>
+
+                <!-- Bouton de suppression visible uniquement pour les admins -->
+                <?php if (isset($isAdmin) && $isAdmin): ?>
+                    <a href="javascript:void(0);" class="delete-btn" onclick="confirmDelete(<?php echo $post['id']; ?>)">
+                        Supprimer
+                    </a>
+                <?php endif; ?>
             </li>
         <?php endforeach; ?>
         </ul>

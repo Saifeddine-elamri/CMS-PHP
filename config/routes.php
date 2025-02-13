@@ -13,8 +13,13 @@ $router->add('GET', '/article/edit/{id}', 'ArticleController@edit', 'AuthMiddlew
 $router->add('POST', '/article/edit/{id}', 'ArticleController@update', 'AuthMiddleware@handle');
 $router->add('GET', '/article/delete/{id}', 'ArticleController@delete', 'AuthMiddleware@handle');
 $router->add('GET', '/post/{id}', 'HomeController@show', 'AuthMiddleware@handle');
+// Exemple de route dans le routeur
 
-// Routes publiques qui n'ont pas besoin de middleware
+
+$router->add('POST','/post/delete/{id}', 'HomeController@delete','RoleMiddleware@handleAdmin');
+$router->add('POST','/post/edit/{id}', 'HomeController@edit','RoleMiddleware@handleAdmin');
+$router->add('GET','/post/edit/{id}', 'HomeController@edit','RoleMiddleware@handleAdmin');
+
 $router->add('GET', '/login', 'AuthController@loginForm');
 $router->add('POST', '/login', 'AuthController@login');
 $router->add('GET', '/logout', 'AuthController@logout');

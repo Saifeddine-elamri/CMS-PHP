@@ -1,4 +1,3 @@
-<!-- Vue pour afficher la liste des posts avec images et style -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Posts</title>
     <link rel="stylesheet" href="../public/assets/css/post.css">
-
-
 </head>
 <body>
 
@@ -27,24 +24,35 @@
 
                     <h2><?php echo htmlspecialchars($post['title']); ?></h2>
                     <p><?php echo nl2br(htmlspecialchars($post['content'])); ?></p>
-                        <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') !== false): ?>
-                            <!-- Affichage des fichiers PDF -->
-                            <div class="file-preview">
-                                <a href="/<?php echo htmlspecialchars($post['file_path']); ?>" download>
-                                    Télécharger le PDF
-                                </a>
-                            </div>
-                        <?php else: ?>
-                            <div class="no-image">Aucun fichier n'est disponible</div>
-                        <?php endif; ?>
-                        <a href="/post/<?php echo $post['id']; ?>">Voir plus de details</a>
-                        </li>
+                    
+                    <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') !== false): ?>
+                        <!-- Affichage des fichiers PDF -->
+                        <div class="file-preview">
+                            <a href="/<?php echo htmlspecialchars($post['file_path']); ?>" download>
+                                Télécharger le PDF
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="no-image">Aucun fichier n'est disponible</div>
+                    <?php endif; ?>
+
+                    <a href="/post/<?php echo $post['id']; ?>">Voir plus de détails</a>
+                    
+                    <!-- Formulaire de suppression visible uniquement pour les admins -->
+                    <?php if ($isAdmin): ?>
+                        <!-- Formulaire de mise à jour visible uniquement pour les admins -->
+                        <a href="/post/edit/<?php echo $post['id']; ?>" class="edit-btn">Mettre à jour</a>
+                        <form action="/post/delete/<?php echo $post['id']; ?>" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
+                            <button type="submit" class="delete-btn">Supprimer</button>
+                        </form>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
         </ul>
     </div>
 
     <?php include('app/Views/templates/footer.php'); ?>
-
+    <script src="../public/assets/js/delete.js"></script>
+        
 </body>
 </html>

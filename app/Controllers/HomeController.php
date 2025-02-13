@@ -5,6 +5,7 @@ use App\Repositories\PostRepository;
 use App\Core\View;
 use App\Middleware\AuthMiddleware;  // Ajout du middleware
 use App\Core\Validator;
+use App\Core\Session;
 
 class HomeController {
 
@@ -24,11 +25,19 @@ class HomeController {
 
     // Nouvelle méthode list() pour lister tous les posts
     public function list() {
-        // Vérifie si l'utilisateur est authentifié avant d'afficher la liste des posts
-
-        $posts = $this->postRepository->findAll();  // Récupérer tous les posts
-        View::render('post/list', ['posts' => $posts]);  // Afficher la vue avec la liste des posts
+        // Vérification du rôle de l'utilisateur avec la classe Session
+        $isAdmin = Session::get('user_role') === 'admin';
+    
+        // Récupération de tous les posts
+        $posts = $this->postRepository->findAll();  
+    
+        // Passage des données à la vue
+        View::render('post/list', [
+            'posts' => $posts,
+            'isAdmin' => $isAdmin
+        ]);
     }
+    
 
     // Méthode pour afficher un post spécifique
     public function show($id) {
@@ -126,27 +135,76 @@ class HomeController {
 
 
 
-    // Méthode pour mettre à jour un post
-    public function update($id) {
-        // Vérifie si l'utilisateur est authentifié avant de permettre la mise à jour
-
-        // Récupérer les données envoyées via un formulaire POST
-        $data = [
-            'title' => $_POST['title'],
-            'content' => $_POST['content'],
-            'author_id' => $_POST['author_id'],
-            'created_at' => date('Y-m-d H:i:s')
-        ];
-
-        $affectedRows = $this->postRepository->update($id, $data);  // Mettre à jour le post dans la base de données
-        echo $affectedRows . ' ligne(s) mise(s) à jour';  // Afficher le nombre de lignes affectées
-    }
+        public function edit($id) {
+            // Vérifie si l'utilisateur est authentifié et est un admin
+            if (Session::get('user_role') !== 'admin') {
+                // Si ce n'est pas un admin, rediriger ou afficher une erreur
+                header('Location: /');
+                exit;
+            }
+        
+            // Récupérer le post par son ID pour l'afficher dans le formulaire d'édition
+            $post = $this->postRepository->findById($id);
+        
+            if (!$post) {
+                // Si le post n'existe pas, rediriger vers la liste des posts
+                header('Location: /post/list');
+                exit;
+            }
+        
+            // Si la requête est en POST, traiter l'édition
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Mettre à jour les informations du post
+                $updatedData = [
+                    'title' => $_POST['title'],
+                    'content' => $_POST['content'],
+                    // Gérer l'upload du fichier (image ou PDF)
+                    'file_path' => isset($_FILES['file']) ? $this->handleFileUpload($_FILES['file']) : $post['file_path'], // Gérer l'upload du fichier
+                ];
+        
+                // Mettre à jour le post dans la base de données
+                $this->postRepository->update($id, $updatedData);
+        
+                // Rediriger vers la page des posts après la mise à jour
+                header('Location: /post/list');
+                exit;
+            }
+        
+            // Afficher le formulaire d'édition avec les données du post
+            View::render('post/edit', ['post' => $post]);
+        }
+        
+        // Méthode pour gérer l'upload des fichiers
+        private function handleFileUpload($file) {
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                return null; // Pas de fichier téléchargé ou erreur
+            }
+        
+            // Vérifier le type du fichier
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+            if (!in_array($file['type'], $allowedTypes)) {
+                return null; // Format de fichier non autorisé
+            }
+        
+            // Déplacer le fichier téléchargé dans le dossier approprié
+            $uploadDir = 'public/uploads/';
+            $filePath = $uploadDir . uniqid() . '-' . basename($file['name']);
+        
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                return $filePath; // Retourner le chemin du fichier téléchargé
+            }
+        
+            return null; // Si le téléchargement échoue, retourner null
+        }
+        
 
     // Méthode pour supprimer un post
     public function delete($id) {
         // Vérifie si l'utilisateur est authentifié avant de permettre la suppression
 
         $affectedRows = $this->postRepository->delete($id);  // Supprimer le post dans la base de données
-        echo $affectedRows . ' ligne(s) supprimée(s)';  // Afficher le nombre de lignes supprimées
+        // Redirection après suppression
+        header('Location: /post/list');
+        exit;
     }
 }

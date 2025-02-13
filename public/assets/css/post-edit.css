@@ -1,0 +1,156 @@
+/* post.css */
+
+/* Styles généraux pour la liste des posts */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    padding: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.no-image {
+    color: #999;
+    font-style: italic;
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-top: 10px;
+}
+
+p {
+    color: #555;
+    font-size: 16px;
+}
+
+.file-preview a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.file-preview a:hover {
+    text-decoration: underline;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Boutons de suppression et mise à jour (seulement pour l'admin) */
+button.delete-btn,
+a.edit-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    background-color: #f44336; /* Red for delete */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+}
+
+button.delete-btn:hover,
+a.edit-btn:hover {
+    opacity: 0.8;
+}
+
+a.edit-btn {
+    background-color: #4CAF50; /* Green for edit */
+    margin-left: 10px;
+}
+
+/* Formulaire d'édition */
+.form-container {
+    background-color: #fff;
+    padding: 30px;
+    margin: 30px auto;
+    width: 50%;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+}
+
+textarea.form-input {
+    resize: vertical;
+}
+
+.form-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.form-btn:hover {
+    background-color: #0056b3;
+}

@@ -135,6 +135,7 @@ footer p {
         <ul>
             <li><a href="/">Accueil</a></li>
             <li><a href="/post/create">Créer un article</a></li>
+            <li><a href="/post/list">Les posts</a></li>
             <li><a href="/about">À propos</a></li>
             <li><a href="/contact">Contact</a></li>
 
