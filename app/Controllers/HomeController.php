@@ -33,15 +33,34 @@ class HomeController {
         // Vérification du rôle de l'utilisateur avec la classe Session
         $isAdmin = Session::get('user_role') === 'admin';
     
-        // Récupération de tous les posts
-        $posts = $this->postRepository->findAll();  
+        // Nombre de posts par page
+        $postsPerPage = 5;
+    
+        // Calculer le nombre total de posts
+        $totalPosts = $this->postRepository->getTotalPosts(); // Méthode qui compte tous les posts dans la base de données
+        $totalPages = ceil($totalPosts / $postsPerPage);
+    
+        // Récupérer la page actuelle (par défaut, la première page)
+        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    
+        // Limiter la page à un maximum de pages disponibles
+        $currentPage = max(1, min($currentPage, $totalPages));
+    
+        // Calculer l'index de départ des posts à afficher
+        $offset = ($currentPage - 1) * $postsPerPage;
+    
+        // Récupérer les posts pour la page actuelle
+        $posts = $this->postRepository->findPaginated($offset, $postsPerPage);
     
         // Passage des données à la vue
         View::render('post/list', [
             'posts' => $posts,
-            'isAdmin' => $isAdmin
+            'isAdmin' => $isAdmin,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages
         ]);
     }
+    
     
 
     // Méthode pour afficher un post spécifique

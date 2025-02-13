@@ -22,10 +22,10 @@
                         <div class="no-image">Aucune image disponible</div>
                     <?php endif; ?>
 
-
                     <h2><?php echo htmlspecialchars($post['title']); ?></h2>
                     <p><?php echo nl2br(htmlspecialchars($post['content'])); ?></p>
-                                                            <!-- Vérification pour afficher l'image ou le fichier PDF -->
+
+                    <!-- Vérification pour afficher l'image ou le fichier PDF -->
                     <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') === false): ?>
                         <!-- Affichage des images -->
                         <img src="/<?php echo htmlspecialchars($post['file_path']); ?>" alt="Image du post" class="post-image">
@@ -53,6 +53,25 @@
                 </li>
             <?php endforeach; ?>
         </ul>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <?php if ($currentPage > 1): ?>
+                <a href="/post/list?page=1" class="pagination-link">Première page</a>
+                <a href="/post/list?page=<?php echo $currentPage - 1; ?>" class="pagination-link">page précédente</a>
+            <?php endif; ?>
+
+            <?php for ($page = 1; $page <= $totalPages; $page++): ?>
+                <a href="/post/list?page=<?php echo $page; ?>" class="pagination-link <?php echo ($page == $currentPage) ? 'active' : ''; ?>">
+                    <?php echo $page; ?>
+                </a>
+            <?php endfor; ?>
+
+            <?php if ($currentPage < $totalPages): ?>
+                <a href="/post/list?page=<?php echo $currentPage + 1; ?>" class="pagination-link">Page suivante</a>
+                <a href="/post/list?page=<?php echo $totalPages; ?>" class="pagination-link">Dernière page</a>
+            <?php endif; ?>
+        </div>
     </div>
 
     <?php include('app/Views/templates/footer.php'); ?>

@@ -135,21 +135,20 @@ footer p {
 <header>
     <nav>
         <ul>
-            <li><a href="/">Accueil</a></li>
-            <li><a href="/post/create">Créer un article</a></li>
-            <li><a href="/post/list">Les posts</a></li>
-            <li><a href="/about">À propos</a></li>
-            <li><a href="/contact">Contact</a></li>
-
-            <?php if (isset($_SESSION['user'])): ?>
+            
+        <?php if (isset($_SESSION['user'])): ?>
                 <!-- Si l'utilisateur est connecté, affiche son nom et un lien de déconnexion -->
                 <li><a href="#">Bonjour, <?php echo htmlspecialchars($_SESSION['username']); ?></a></li>
+                <li><a href="/post/list">Accueil</a></li>
+                <li><a href="/post/create">Créer un nouveau post</a></li>
                 <li><a href="/logout">Se déconnecter</a></li>
+            
             <?php else: ?>
                 <!-- Si l'utilisateur n'est pas connecté, affiche les liens de connexion et d'inscription -->
-                <li><a href="/login">Se connecter</a></li>
                 <li><a href="/register">S'inscrire</a></li>
+
             <?php endif; ?>
+
         </ul>
     </nav>
 </header>
