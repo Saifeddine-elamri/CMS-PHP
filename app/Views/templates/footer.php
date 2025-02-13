@@ -7,6 +7,7 @@
 footer {
     background-color: #2c3e50; /* Couleur de fond plus moderne */
     color: white;
+    width:100%;
     padding: 30px 0; /* Plus d'espace intérieur */
     margin-top: auto; /* Pour coller le footer en bas de la page */
     font-family: 'Arial', sans-serif; /* Police moderne */
@@ -68,7 +69,7 @@ footer ul li a:hover {
 
 <footer>
     <div class="footer-content">
-        <p>&copy; <?php echo date('Y'); ?> CMS Complexe. Tous droits réservés.</p>
+        <p>  CMS PHP  <?php echo date('Y'); ?></p>
         <ul>
             <li><a href="/privacy-policy">Politique de confidentialité</a></li>
             <li><a href="/terms-of-service">Conditions d'utilisation</a></li>

@@ -7,6 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    color: #333; /* Ajout d'une couleur de texte par défaut pour une meilleure lisibilité */
 }
 
 header {
@@ -14,6 +15,7 @@ header {
     color: white;
     padding: 20px;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre pour un effet de profondeur */
 }
 
 footer {
@@ -21,9 +23,8 @@ footer {
     color: white;
     text-align: center;
     padding: 10px;
-    position: absolute;
-    bottom: 0;
     width: 100%;
+    margin-top: auto; /* Pour s'assurer que le footer reste en bas même si le contenu est court */
 }
 
 main {
@@ -39,7 +40,7 @@ main {
 form {
     background-color: #fff;
     padding: 30px;
-    border-radius: 5px;
+    border-radius: 8px; /* Augmentation du rayon de bordure pour un look plus moderne */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
@@ -47,56 +48,92 @@ form {
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Espacement accru pour une meilleure séparation des éléments */
 }
 
 label {
     font-weight: bold;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px; /* Espacement accru pour une meilleure lisibilité */
+    color: #555; /* Couleur de texte légèrement plus douce */
 }
 
 input[type="text"],
 input[type="password"] {
     width: 100%;
-    padding: 10px;
+    padding: 12px; /* Padding accru pour un meilleur confort de saisie */
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+    font-size: 16px; /* Taille de police augmentée pour une meilleure lisibilité */
+    transition: border-color 0.3s ease; /* Transition pour un effet visuel lors du focus */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #4CAF50; /* Changement de couleur de bordure lors du focus */
+    outline: none; /* Suppression de l'outline par défaut */
 }
 
 button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s ease; /* Transition pour un effet visuel au survol */
 }
 
 button:hover {
     background-color: #45a049;
 }
 
+button:active {
+    background-color: #3d8b40; /* Changement de couleur lors du clic */
+}
+
 /* Error message */
 .error-message {
-    background-color: #ffdddd;
-    color: #d8000c;
-    padding: 10px;
+    background-color: #ffebee; /* Couleur de fond plus douce */
+    color: #c62828; /* Couleur de texte plus foncée */
+    padding: 12px;
     border-radius: 5px;
     margin-bottom: 20px;
+    border: 1px solid #ffcdd2; /* Bordure pour mieux délimiter le message d'erreur */
+    font-size: 14px; /* Taille de police ajustée */
 }
 
 /* Link */
 a {
     color: #4CAF50;
     text-decoration: none;
+    transition: color 0.3s ease; /* Transition pour un effet visuel au survol */
 }
 
 a:hover {
+    color: #45a049; /* Changement de couleur au survol */
     text-decoration: underline;
+}
+
+
+.form-footer {
+    text-align: center; /* Centrer le texte */
+    margin-top: 20px; /* Espacement au-dessus du paragraphe */
+    font-size: 14px; /* Taille de police réduite pour un look discret */
+    color: #555; /* Couleur de texte plus douce */
+}
+
+.form-footer a {
+    color: #4CAF50; /* Couleur du lien cohérente avec le thème */
+    text-decoration: none; /* Supprimer le soulignement par défaut */
+    font-weight: bold; /* Rendre le lien plus visible */
+}
+
+.form-footer a:hover {
+    text-decoration: underline; /* Souligner le lien au survol */
 }
 
 /* Responsive Design */
@@ -107,5 +144,14 @@ a:hover {
 
     button {
         font-size: 14px;
+    }
+
+    header {
+        padding: 15px; /* Padding réduit pour les petits écrans */
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        padding: 10px; /* Padding réduit pour les petits écrans */
     }
 }

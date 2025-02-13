@@ -19,7 +19,7 @@
                 <p><?php echo nl2br(htmlspecialchars($post['content'])); ?></p>
                                 <!-- Vérification pour afficher l'image ou le fichier PDF -->
             <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') === false): ?>
-<!-- Affichage des images -->
+                    <!-- Affichage des images -->
                     <img src="/<?php echo htmlspecialchars($post['file_path']); ?>" alt="Image du post" class="post-image">
                 <?php elseif (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') !== false): ?>
                     <!-- Affichage des fichiers PDF -->

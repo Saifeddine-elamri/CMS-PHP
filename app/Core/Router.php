@@ -5,8 +5,17 @@ class Router {
     // Propriété statique pour stocker les routes
     protected static $routes = [];
 
+
     // Ajoute une route à la liste avec des middlewares optionnels
-    public static function add($method, $uri, $action, $middlewares = []) {
+    public static function add($method, $uri, $action, $middlewares = null) {
+        // Si aucun middleware n'est fourni, on initialise un tableau vide
+        if ($middlewares === null) {
+            $middlewares = [];
+        } elseif (!is_array($middlewares)) {
+            // Si un seul middleware est passé sous forme de chaîne, le mettre dans un tableau
+            $middlewares = [$middlewares];
+        }
+
         self::$routes[] = [
             'method' => $method,
             'uri' => $uri,
