@@ -2,6 +2,7 @@
 use App\Core\Router;
 
 $router = new Router();
+
 $router->add('GET', '/', 'HomeController@index', 'AuthMiddleware@handle');
 $router->add('GET', '/post/create', 'HomeController@create', 'RoleMiddleware@handleAdmin');
 $router->add('GET', '/post/list', 'HomeController@list', 'AuthMiddleware@handle');

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="CMS Complexe - Se connecter pour accéder à votre espace personnel">
+    <meta name="description" content="CMS">
     <meta name="author" content="Votre nom ou entreprise">
     <title>Se connecter</title>
 

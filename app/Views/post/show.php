@@ -22,7 +22,17 @@
 
         <h1><?php echo htmlspecialchars($post['title']); ?></h1>
         <p><?php echo nl2br(htmlspecialchars($post['content'])); ?></p>
-        
+         <?php if (!empty($post['file_path']) && strpos($post['file_path'], '.pdf') !== false): ?>
+            <!-- Affichage du fichier PDF avec style amélioré -->
+            <div class="file-preview">
+                <a href="/<?php echo htmlspecialchars($post['file_path']); ?>" download class="file-link">
+                    <span>Télécharger le PDF</span>
+                </a>
+            </div>
+        <?php else: ?>
+            <div class="no-image">Aucun fichier n'est disponible</div>
+        <?php endif; ?>
+
         <a class="back-link" href="/post/list">← Retour à la liste des posts</a>
     </div>
 
