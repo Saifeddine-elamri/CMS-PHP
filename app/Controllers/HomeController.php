@@ -2,6 +2,8 @@
 namespace App\Controllers;
 
 use App\Repositories\PostRepository;
+use App\Repositories\UserRepository;
+
 use App\Core\View;
 use App\Middleware\AuthMiddleware;  // Ajout du middleware
 use App\Core\Validator;
@@ -10,9 +12,12 @@ use App\Core\Session;
 class HomeController {
 
     protected $postRepository;
+    protected $userRepository;
 
     public function __construct() {
         $this->postRepository = new PostRepository();
+        $this->userRepository = new UserRepository();
+
     }
 
     // Méthode pour afficher tous les posts
@@ -73,7 +78,7 @@ class HomeController {
                         'types' => ['image/jpeg', 'image/png', 'image/gif', 'application/pdf']
                     ], "Le fichier doit être une image (JPG, PNG, GIF) ou un PDF.")
                     ->addRule('file', 'fileSize', [
-                        'maxSize' => 2 * 1024 * 1024
+                        'maxSize' => 3 * 1024 * 1024
                     ], "Le fichier ne doit pas dépasser 2 Mo.");
     
                 // On lance la validation
@@ -126,8 +131,10 @@ class HomeController {
                     View::render('post/create', ['errors' => $errors]);
                 }
             } else {
+                $admins = $this->userRepository->getAdmins();  // Méthode pour récupérer les admins
+
                 // Afficher le formulaire de création d'un post
-                View::render('post/create');
+                View::render('post/create', ['admins' => $admins]);
             }
         }
     

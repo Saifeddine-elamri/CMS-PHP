@@ -147,3 +147,47 @@ body {
     font-size: 0.9em;
     margin-top: 5px;
 }
+/* Styles pour la zone de drag and drop */
+.file-upload {
+    margin-top: 10px;
+}
+
+.file-drop-area {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    padding: 25px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.file-drop-area.dragover {
+    border-color: #fda085;
+    background-color: #fff3f0;
+}
+
+.file-msg {
+    font-size: 1em;
+    color: #555;
+    text-align: center;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Styles pour le fichier sélectionné */
+.file-drop-area.has-file .file-msg {
+    color: #28a745;
+    font-weight: bold;
+}

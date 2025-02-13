@@ -36,4 +36,10 @@ class UserRepository {
             // Retourner l'ID du nouvel utilisateur
             return $this->db->lastInsertId();
         }
+
+                // Exemple de méthode dans UserRepository pour obtenir les administrateurs
+        public function getAdmins() {
+            return $this->db->query("SELECT id, username FROM users WHERE role = 'admin'")->fetchAll();
+        }
+
 }
