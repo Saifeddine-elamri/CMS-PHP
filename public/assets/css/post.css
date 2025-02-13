@@ -19,6 +19,8 @@ h1 {
 
 ul {
     display:flex;
+    justify-content: center;
+
     flex-wrap: wrap;
     list-style: none;
     padding: 0;
@@ -26,7 +28,7 @@ ul {
     max-width: 1200px;
 }
 
-li {
+.li-post {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 20px 0;
@@ -34,7 +36,7 @@ li {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-li:hover {
+.li-post:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -49,7 +51,7 @@ p {
     line-height: 1.6;
 }
 
-a {
+.a-post {
     display: inline-block;
     padding: 10px 15px;
     background: #3498db;
