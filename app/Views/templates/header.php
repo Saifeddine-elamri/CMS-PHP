@@ -139,7 +139,7 @@ footer p {
         <?php if (isset($_SESSION['user'])): ?>
                 <!-- Si l'utilisateur est connecté, affiche son nom et un lien de déconnexion -->
                 <li><a href="#">Bonjour, <?php echo htmlspecialchars($_SESSION['username']); ?></a></li>
-                <li><a href="/post/list">Accueil</a></li>
+                <li><a href="/post/list">Les posts</a></li>
                 <li><a href="/post/create">Créer un nouveau post</a></li>
                 <li><a href="/logout">Se déconnecter</a></li>
             

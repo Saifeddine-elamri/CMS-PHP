@@ -5,7 +5,10 @@ class Router {
     // Propriété statique pour stocker les routes
     protected static $routes = [];
 
-
+    // Récupère toutes les routes
+    public static function getRoutes() {
+        return self::$routes;
+    }
     // Ajoute une route à la liste avec des middlewares optionnels
     public static function add($method, $uri, $action, $middlewares = null) {
         // Si aucun middleware n'est fourni, on initialise un tableau vide

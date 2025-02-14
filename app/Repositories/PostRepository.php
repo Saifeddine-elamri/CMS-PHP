@@ -69,16 +69,19 @@ class PostRepository {
 
 
     public function findPaginated($offset, $limit) {
+        // Sécuriser les variables en forçant à des entiers
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+    
         // Effectuer une requête pour récupérer les posts en utilisant OFFSET et LIMIT
-        $sql = "SELECT * FROM posts ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':limit', $limit);
-        $stmt->bindParam(':offset', $offset);
-        $stmt->execute();
+        $sql = "SELECT * FROM posts ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+        
+        // Exécuter la requête
+        $stmt = $this->db->query($sql);
         
         return $stmt->fetchAll();
     }
-
+    
     public function getTotalPosts() {
         // Effectuer une requête pour obtenir le nombre total de posts
         $sql = "SELECT COUNT(*) AS total FROM posts";

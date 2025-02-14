@@ -28,38 +28,35 @@ class HomeController {
         View::render('post/index', ['posts' => $posts]);  // Afficher la vue avec les posts
     }
 
-    // Nouvelle méthode list() pour lister tous les posts
-    public function list() {
-        // Vérification du rôle de l'utilisateur avec la classe Session
-        $isAdmin = Session::get('user_role') === 'admin';
-    
-        // Nombre de posts par page
-        $postsPerPage = 5;
-    
-        // Calculer le nombre total de posts
-        $totalPosts = $this->postRepository->getTotalPosts(); // Méthode qui compte tous les posts dans la base de données
-        $totalPages = ceil($totalPosts / $postsPerPage);
-    
-        // Récupérer la page actuelle (par défaut, la première page)
-        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    
-        // Limiter la page à un maximum de pages disponibles
-        $currentPage = max(1, min($currentPage, $totalPages));
-    
-        // Calculer l'index de départ des posts à afficher
-        $offset = ($currentPage - 1) * $postsPerPage;
-    
-        // Récupérer les posts pour la page actuelle
-        $posts = $this->postRepository->findPaginated($offset, $postsPerPage);
-    
-        // Passage des données à la vue
-        View::render('post/list', [
-            'posts' => $posts,
-            'isAdmin' => $isAdmin,
-            'currentPage' => $currentPage,
-            'totalPages' => $totalPages
-        ]);
+public function list($page = 1) {
+    $isAdmin = Session::get('user_role') === 'admin';
+    $postsPerPage = 4;
+    $search = isset($_GET['search']) ? $_GET['search'] : '';  // Récupère le paramètre de recherche de l'URL
+    $totalPosts = $this->postRepository->getTotalPosts($search);  // Passe la recherche à la méthode getTotalPosts
+    $totalPages = ceil($totalPosts / $postsPerPage);
+
+    // Si la page actuelle est supérieure au nombre de pages, on la réajuste
+    $currentPage = is_numeric($page) ? (int)$page : 1;
+    $currentPage = max(1, min($currentPage, $totalPages));
+    $offset = ($currentPage - 1) * $postsPerPage;
+
+    if ($currentPage > $totalPages) {
+        $currentPage = $totalPages;
     }
+
+    // Récupérer les posts paginés en passant le paramètre de recherche
+    $posts = $this->postRepository->findPaginated($offset, $postsPerPage, $search);
+
+    View::render('post/list', [
+        'posts' => $posts,
+        'isAdmin' => $isAdmin,
+        'currentPage' => $currentPage,
+        'totalPages' => $totalPages,
+        'search' => $search  // Passer le terme de recherche à la vue
+    ]);
+}
+
+
     
     
 
@@ -97,8 +94,8 @@ class HomeController {
                         'types' => ['image/jpeg', 'image/png', 'image/gif', 'application/pdf']
                     ], "Le fichier doit être une image (JPG, PNG, GIF) ou un PDF.")
                     ->addRule('file', 'fileSize', [
-                        'maxSize' => 3 * 1024 * 1024
-                    ], "Le fichier ne doit pas dépasser 2 Mo.");
+                        'maxSize' => 5 * 1024 * 1024
+                    ], "Le fichier ne doit pas dépasser 5 Mo.");
     
                 // On lance la validation
                 if ($validator->validate()) {
