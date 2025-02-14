@@ -37,8 +37,8 @@
                 <select name="author_id" id="author_id" class="form-input" required>
                     <option value="">-- Sélectionner un auteur --</option>
                     <?php foreach ($admins as $admin): ?>
-                        <option value="<?= $admin['id']; ?>" <?= ($_POST['author_id'] ?? '') == $admin['id'] ? 'selected' : ''; ?>>
-                            <?= htmlspecialchars($admin['username']); ?>
+                        <option value="<?php echo htmlspecialchars($admin['id'], ENT_QUOTES, "UTF-8"); ?>" <?= ($_POST['author_id'] ?? '') == $admin['id'] ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($admin['username'], ENT_QUOTES, "UTF-8"); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

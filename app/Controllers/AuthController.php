@@ -6,6 +6,7 @@ use App\Core\View;
 use App\Services\AuthService;
 use App\Repositories\UserRepository;
 use App\Core\Session;
+use App\Core\Http;
 
 class AuthController {
 
@@ -23,10 +24,10 @@ class AuthController {
     }
 
     // Méthode pour traiter la connexion de l'utilisateur
+    #[Http('POST')]
     public function login() {
         $errorMessage = ''; // Variable pour le message d'erreur
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'];
             $password = $_POST['password'];
 
@@ -47,7 +48,7 @@ class AuthController {
                 // Si l'authentification échoue, définir le message d'erreur
                 $errorMessage = "Nom d'utilisateur ou mot de passe incorrect.";
             }
-        }
+        
 
         // Passer le message d'erreur à la vue
         View::render('auth/login', ['errorMessage' => $errorMessage]);
@@ -64,8 +65,8 @@ class AuthController {
     }
 
     // Méthode pour traiter l'inscription de l'utilisateur
+    #[Http('POST')]
     public function register() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'];
             $password = $_POST['password'];
             $confirmPassword = $_POST['confirm_password'];
@@ -97,6 +98,6 @@ class AuthController {
 
             // Rediriger l'utilisateur vers son tableau de bord après l'enregistrement
             header('Location: /');
-        }
+        
     }
 }

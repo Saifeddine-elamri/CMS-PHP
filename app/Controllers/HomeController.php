@@ -7,6 +7,7 @@ use App\Core\View;
 use App\Middleware\AuthMiddleware;  // Ajout du middleware
 use App\Core\Validator;
 use App\Core\Session;
+use App\Core\Http;
 
 class HomeController {
 
@@ -31,33 +32,33 @@ class HomeController {
         'title' => 'Liste des Posts']);  // Afficher la vue avec les posts
     }
 
-public function list($page = 1) {
-    $isAdmin = Session::get('user_role') === 'admin';
-    $postsPerPage = 4;
-    $search = isset($_GET['search']) ? $_GET['search'] : '';  // Récupère le paramètre de recherche de l'URL
-    $totalPosts = $this->postRepository->getTotalPosts($search);  // Passe la recherche à la méthode getTotalPosts
-    $totalPages = ceil($totalPosts / $postsPerPage);
+    public function list($page = 1) {
+        $isAdmin = Session::get('user_role') === 'admin';
+        $postsPerPage = 4;
+        $search = isset($_GET['search']) ? $_GET['search'] : '';  // Récupère le paramètre de recherche de l'URL
+        $totalPosts = $this->postRepository->getTotalPosts($search);  // Passe la recherche à la méthode getTotalPosts
+        $totalPages = ceil($totalPosts / $postsPerPage);
 
-    // Si la page actuelle est supérieure au nombre de pages, on la réajuste
-    $currentPage = is_numeric($page) ? (int)$page : 1;
-    $currentPage = max(1, min($currentPage, $totalPages));
-    $offset = ($currentPage - 1) * $postsPerPage;
+        // Si la page actuelle est supérieure au nombre de pages, on la réajuste
+        $currentPage = is_numeric($page) ? (int)$page : 1;
+        $currentPage = max(1, min($currentPage, $totalPages));
+        $offset = ($currentPage - 1) * $postsPerPage;
 
-    if ($currentPage > $totalPages) {
-        $currentPage = $totalPages;
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        // Récupérer les posts paginés en passant le paramètre de recherche
+        $posts = $this->postRepository->findPaginated($offset, $postsPerPage);
+
+        View::render('post/list', [
+            'posts' => $posts,
+            'isAdmin' => $isAdmin,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+
+        ]);
     }
-
-    // Récupérer les posts paginés en passant le paramètre de recherche
-    $posts = $this->postRepository->findPaginated($offset, $postsPerPage);
-
-    View::render('post/list', [
-        'posts' => $posts,
-        'isAdmin' => $isAdmin,
-        'currentPage' => $currentPage,
-        'totalPages' => $totalPages,
-
-    ]);
-}
 
 
     
@@ -74,13 +75,12 @@ public function list($page = 1) {
             echo 'Article non trouvé';
         }
     }
-    
+        #[Http('POST')]
         public function create() {
             // Vérifiez que l'utilisateur est authentifié si nécessaire
             // (Ajoutez ici votre logique d'authentification)
     
             // Vérifiez si la requête est en POST
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
                 // Initialisation du Validator avec les données POST
                 $validator = new Validator($_POST);
@@ -149,15 +149,14 @@ public function list($page = 1) {
                     $errors = $validator->getErrors();
                     View::render('post/create', ['errors' => $errors]);
                 }
-            } else {
-                $admins = $this->userRepository->getAdmins();  // Méthode pour récupérer les admins
+            } 
+        
+        public function createRender() {
+            $admins = $this->userRepository->getAdmins();  // Méthode pour récupérer les admins
 
-                // Afficher le formulaire de création d'un post
-                View::render('post/create', ['admins' => $admins]);
-            }
+            // Afficher le formulaire de création d'un post
+            View::render('post/create', ['admins' => $admins]);
         }
-    
-    
 
 
 

@@ -4,7 +4,7 @@ use App\Core\Router;
 // On appelle les méthodes statiques directement sur la classe Router
 Router::add('GET', '/', 'HomeController@index', 'AuthMiddleware@handle');
 
-Router::add('GET', '/post/create', 'HomeController@create', 'RoleMiddleware@handleAdmin');
+Router::add('GET', '/post/create', 'HomeController@createRender', 'RoleMiddleware@handleAdmin');
 Router::add('POST', '/post/create', 'HomeController@create', 'AuthMiddleware@handle');
 Router::add('GET', '/post/list', 'HomeController@list', 'AuthMiddleware@handle');
 Router::add('GET', '/post/{id}', 'HomeController@show', 'AuthMiddleware@handle');

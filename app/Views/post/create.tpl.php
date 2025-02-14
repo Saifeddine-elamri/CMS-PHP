@@ -37,8 +37,8 @@
                 <select name="author_id" id="author_id" class="form-input" required>
                     <option value="">-- Sélectionner un auteur --</option>
                     @foreach ($admins as $admin)
-                        <option value="<?= $admin['id']; ?>" <?= ($_POST['author_id'] ?? '') == $admin['id'] ? 'selected' : ''; ?>>
-                            <?= htmlspecialchars($admin['username']); ?>
+                        <option value="{{ $admin['id'] }}" <?= ($_POST['author_id'] ?? '') == $admin['id'] ? 'selected' : ''; ?>>
+                            {{ $admin['username'] }}
                         </option>
                     @endforeach
                 </select>

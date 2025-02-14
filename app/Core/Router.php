@@ -1,5 +1,7 @@
 <?php
 namespace App\Core;
+use ReflectionMethod;
+use App\Core\Http;
 
 class Router {
     // Propriété statique pour stocker les routes
@@ -27,44 +29,71 @@ class Router {
         ];
     }
 
-        // Dispatch la requête vers le bon contrôleur et méthode
-        public static function dispatch() {
-            // Récupérer l'URI de la requête et la méthode HTTP
-            $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-            // Parcourir les routes pour trouver la correspondance
-            foreach (self::$routes as $route) {
-                // Convertir la route en expression régulière pour gérer les paramètres dynamiques
-                $pattern = '#^' . preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<\1>[^/]+)', $route['uri']) . '$#';
+    public static function dispatch() {
+        $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-                // Vérifier si la méthode et l'URI correspondent à la requête
-                if ($route['method'] === $requestMethod && preg_match($pattern, $requestUri, $matches)) {
-                    // Extrait les paramètres dynamiques
-                    $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        $foundRoute = false;  // Variable pour savoir si une route a été trouvée
 
-                    // Exécuter les middlewares associés à cette route
-                    if (!empty($route['middlewares'])) {
-                        self::runMiddlewares($route['middlewares']);
+        foreach (self::$routes as $route) {
+            $pattern = '#^' . preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<\1>[^/]+)', $route['uri']) . '$#';
+
+            if ($route['method'] === $requestMethod && preg_match($pattern, $requestUri, $matches)) {
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
+                if (!empty($route['middlewares'])) {
+                    self::runMiddlewares($route['middlewares']);
+                }
+
+                list($controller, $method) = explode('@', $route['action']);
+                $controller = "App\\Controllers\\$controller";
+                $controllerInstance = new $controller();
+
+                // Vérifie les attributs HttpMethod sur la méthode pour POST, PUT, etc.
+                if ($requestMethod !== 'GET') {
+                    $methodReflection = new ReflectionMethod($controllerInstance, $method);
+                    $httpMethodAttributes = $methodReflection->getAttributes(Http::class);
+                    
+                    foreach ($httpMethodAttributes as $attribute) {
+                        $httpMethod = $attribute->newInstance();
+                        
+                        // Vérifie si la méthode HTTP correspond
+                        if ($httpMethod->method === $requestMethod) {
+                            call_user_func_array([$controllerInstance, $method], $params);
+                            $foundRoute = true;
+                            break;
+                        }
                     }
-
-                    // Divise l'action en contrôleur et méthode
-                    list($controller, $method) = explode('@', $route['action']);
-
-                    // Instancie le contrôleur et appelle la méthode
-                    $controller = "App\\Controllers\\$controller";
-                    $controllerInstance = new $controller();
+                } else {
+                    // Si la méthode est GET, on l'exécute directement sans passer par les attributs
                     call_user_func_array([$controllerInstance, $method], $params);
+                    $foundRoute = true;
+                }
+                
+                // Si une route a été trouvée, on l'exécute et on arrête la boucle
+                if ($foundRoute) {
                     return;
                 }
             }
+        }
 
-            // Si aucune route ne correspond, affiche une erreur 404
+        // Si aucune route n'a été trouvée et que la méthode est GET, on ne fait rien
+        if ($requestMethod === 'GET' && !$foundRoute) {
+            return;  // Ne rien faire pour les requêtes GET si aucune route n'a été trouvée
+        }
+
+        // Sinon, on renvoie une erreur appropriée
+        if ($requestMethod !== 'GET') {
+            header("HTTP/1.0 405 Method Not Allowed");
+            echo "Méthode non autorisée pour cette action.";
+        } else {
             header("HTTP/1.0 404 Not Found");
             $controller = new \App\Controllers\ErrorController();
             $controller->notFound();
         }
-            
+    }
+     
 
     // Exécute un middleware
             public static function runMiddlewares($middlewares) {
