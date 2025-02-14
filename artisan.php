@@ -1,7 +1,16 @@
 #!/usr/bin/env php
 <?php
 // console
+require __DIR__ . '/vendor/autoload.php';
 
+use App\Core\Database;
+
+// Charger la configuration de la base de données
+$config = require __DIR__ . '/config/database.php';
+
+// Initialiser la connexion à la base de données
+Database::init($config);
+$pdo = Database::getConnection();
 // Vérifier si on est bien en ligne de commande
 if (php_sapi_name() !== 'cli') {
     echo "Cette commande doit être exécutée en ligne de commande.\n";
@@ -262,6 +271,73 @@ class Create{$modelName}Table {
 
 
 
+
+
+
+// Fonction principale de migration
+function migrate() {
+    global $pdo;
+
+    // Créer la table des migrations si elle n'existe pas
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            migration_name VARCHAR(255) NOT NULL,
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );");
+    } catch (PDOException $e) {
+        die("Erreur lors de la création de la table des migrations : " . $e->getMessage());
+    }
+
+    // Récupérer tous les fichiers de migration dans le répertoire
+    $migrationFiles = glob('database/migrations/*.php');
+
+    if (empty($migrationFiles)) {
+        echo "Aucune migration à appliquer.\n";
+        return;
+    }
+
+    // Liste des migrations déjà appliquées
+    $appliedMigrations = $pdo->query("SELECT migration_name FROM migrations")->fetchAll(PDO::FETCH_COLUMN);
+
+    // Appliquer les migrations
+    foreach ($migrationFiles as $migrationFile) {
+        $migrationClass = getMigrationClass($migrationFile);
+
+        // Si la migration a déjà été appliquée, on la saute
+        if (in_array($migrationClass, $appliedMigrations)) {
+            echo "Migration déjà appliquée : $migrationClass\n";
+            continue;
+        }
+
+        // Inclure le fichier de migration
+        include_once $migrationFile;
+
+        if (class_exists($migrationClass)) {
+            $migration = new $migrationClass();
+            echo "Exécution de la migration : " . $migrationClass . "\n";
+            $migration->up($pdo);  // Appeler la méthode up() pour exécuter la requête SQL
+
+            // Enregistrer la migration dans la table `migrations`
+            $stmt = $pdo->prepare("INSERT INTO migrations (migration_name) VALUES (?)");
+            $stmt->execute([$migrationClass]);
+        } else {
+            echo "La classe $migrationClass n'existe pas dans le fichier $migrationFile.\n";
+        }
+    }
+}
+
+// Fonction pour obtenir le nom de la classe de migration à partir du fichier
+function getMigrationClass($migrationFile) {
+    // Extraire le nom du fichier sans l'extension .php
+    $filename = pathinfo($migrationFile, PATHINFO_FILENAME);
+    
+    // Convertir le nom du fichier en PascalCase
+    $className = str_replace(' ', '', ucwords(str_replace('_', ' ', $filename)));
+
+    return $className;
+}
+
 // Exécution de la fonction correspondante en fonction de la commande
 if ($command === 'making:controller') {
     createController();
@@ -270,8 +346,6 @@ if ($command === 'making:controller') {
 } elseif ($command === 'making:migration') {
     createMigrationFromModel();
 }
-elseif ($command === 'migrate') {
-    // Inclure le fichier de migration
-    require_once 'migrate.php';
-    migrate(); // Appeler la fonction migrate
+  elseif ($command === 'migrate') {
+    migrate(); 
 } 
