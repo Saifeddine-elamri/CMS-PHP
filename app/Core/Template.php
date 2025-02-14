@@ -103,9 +103,16 @@ class Template
                 // On transforme directement la condition en code PHP
                 return '<?php elseif (' . $condition . '): ?>';
             }, $content);
+
+            // Compiler la directive @elseif
+            $content = preg_replace_callback('/@elif\s*\(((?:[^()]|\((?:[^()]|\([^()]*\))*\))*)\)/', function ($matches) {
+                // On récupère la condition à l'intérieur des parenthèses
+                $condition = $matches[1];
             
-
-
+                // On transforme directement la condition en code PHP
+                return '<?php elseif (' . $condition . '): ?>';
+            }, $content);
+            
             // Compiler la directive @else (pas besoin de parenthèses ici, mais on la transforme en PHP)
             $content = preg_replace('/@else/', '<?php else: ?>', $content);
 
@@ -135,7 +142,7 @@ class Template
                 // Assurer la gestion des erreurs pour l'inclusion de fichiers
                 $filePath = addslashes($matches[1]);
                 if (file_exists($filePath)) {
-                    return '<?php echo $this->render("' . $filePath . '"); ?>';
+                    return '<?php include("' . $filePath . '"); ?>';
                 } else {
                     throw new Exception("Le fichier à inclure n'existe pas : " . $filePath);
                 }

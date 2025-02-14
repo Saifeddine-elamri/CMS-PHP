@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <?php include('app/Views/templates/header.php'); ?>
+    @include('app/Views/templates/header.php')
 
     <div>
         <h1>Liste des Posts</h1>
@@ -30,7 +30,7 @@
                     @if (strpos($post['file_path'], '.pdf') === false && file_exists($post['file_path'])): 
                         <!-- Affichage des images -->
                         <img src="/{{ $post['file_path']  }}" alt="Image du post" class="post-image">
-                    @elseif (strpos($post['file_path'], '.pdf') !== false): 
+                    @elif (strpos($post['file_path'], '.pdf') !== false): 
                         <!-- Affichage des fichiers PDF -->
                         <div class="file-preview">
                             <a href="/{{ $post['file_path'] }}" download class="a-post">
@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <?php include('app/Views/templates/footer.php'); ?>
+    @include('app/Views/templates/footer.php')
     <script src="../public/assets/js/delete.js"></script>
         
 </body>

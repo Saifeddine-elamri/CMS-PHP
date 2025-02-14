@@ -42,7 +42,7 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <small class="error-message"><?= $errors['author_id'] ?? '' ?></small>
+                <small class="error-message"><?php echo htmlspecialchars($errors['author_id'] ?? '', ENT_QUOTES, "UTF-8"); ?></small>
             </div>
 
             <!-- Champ Fichier (Image ou PDF) -->
@@ -53,7 +53,7 @@
                         <span class="file-msg">Glissez-déposez un fichier ici ou cliquez pour en sélectionner un</span>
                         <input type="file" name="file" id="file" class="file-input" accept="image/*,application/pdf">
                     </div>
-                    <small class="error-message"><?= $errors['file'] ?? '' ?></small>
+                    <small class="error-message"><?php echo htmlspecialchars($errors['file'] ?? '', ENT_QUOTES, "UTF-8"); ?></small>
                 </div>
             </div>
 
