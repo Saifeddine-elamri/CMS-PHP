@@ -8,28 +8,28 @@
 </head>
 <body>
 
-    <?php include("app/Views/templates/header.php"); ?>
+    @include('app/Views/templates/header.php')
 
     <main class="form-container">
         <h1>Modifier le Post</h1>
 
-        <form action="/post/edit/<?php echo htmlspecialchars($post['id'], ENT_QUOTES, "UTF-8"); ?>" method="POST" enctype="multipart/form-data">
+        <form action="/post/edit/{{ $post['id'] }}" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title" class="form-label">Titre :</label>
-                <input type="text" name="title" id="title" class="form-input" value="<?php echo htmlspecialchars($post['title'], ENT_QUOTES, "UTF-8"); ?>" required>
+                <input type="text" name="title" id="title" class="form-input" value="{{ $post['title'] }}" required>
             </div>
 
             <div class="form-group">
                 <label for="content" class="form-label">Contenu :</label>
-                <textarea name="content" id="content" class="form-input" rows="5" required><?php echo htmlspecialchars($post['content'], ENT_QUOTES, "UTF-8"); ?></textarea>
+                <textarea name="content" id="content" class="form-input" rows="5" required>{{ $post['content'] }}</textarea>
             </div>
 
             <div class="form-group">
                 <label for="file" class="form-label">Fichier (Image ou PDF) :</label>
                 <input type="file" name="file" id="file" class="form-input" accept="image/*,application/pdf">
-                <?php if (!empty($post['file_path'])): ?>: 
-                    <p>Fichier actuel : <a href="/<?php echo htmlspecialchars($post['file_path'], ENT_QUOTES, "UTF-8"); ?>" download>Voir le fichier actuel</a></p>
-                <?php endif; ?>
+                @if (!empty($post['file_path'])): 
+                    <p>Fichier actuel : <a href="/{{ $post['file_path'] }}" download>Voir le fichier actuel</a></p>
+                @endif
             </div>
 
             <div class="form-group">
@@ -38,7 +38,7 @@
         </form>
     </main>
 
-    <?php include("app/Views/templates/footer.php"); ?>
+    @include('app/Views/templates/footer.php')
 
 </body>
 </html>

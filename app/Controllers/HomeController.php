@@ -158,8 +158,19 @@ class HomeController {
             View::render('post/create', ['admins' => $admins]);
         }
 
+        public function editForm($id) {
+            if (Session::get('user_role') !== 'admin') {
+                // Si ce n'est pas un admin, rediriger ou afficher une erreur
+                header('Location: /');
+                exit;
+            }
+            $post = $this->postRepository->findById($id);
 
+            // Afficher le formulaire d'édition avec les données du post
+            View::render('post/edit', ['post' => $post]);
+        }
 
+        #[Http('POST')]
         public function edit($id) {
             // Vérifie si l'utilisateur est authentifié et est un admin
             if (Session::get('user_role') !== 'admin') {
@@ -178,7 +189,6 @@ class HomeController {
             }
         
             // Si la requête est en POST, traiter l'édition
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Mettre à jour les informations du post
                 $updatedData = [
                     'title' => $_POST['title'],
@@ -193,10 +203,8 @@ class HomeController {
                 // Rediriger vers la page des posts après la mise à jour
                 header('Location: /post/list');
                 exit;
-            }
+            
         
-            // Afficher le formulaire d'édition avec les données du post
-            View::render('post/edit', ['post' => $post]);
         }
         
         // Méthode pour gérer l'upload des fichiers
@@ -224,6 +232,7 @@ class HomeController {
         
 
     // Méthode pour supprimer un post
+    #[Http('POST')]
     public function delete($id) {
         // Vérifie si l'utilisateur est authentifié avant de permettre la suppression
 
