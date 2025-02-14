@@ -12,8 +12,8 @@ if (php_sapi_name() !== 'cli') {
 $command = $argv[1] ?? null;
 
 // Vérifier si la commande est bien "making:controller" ou "making:model"
-if (!in_array($command, ['making:controller', 'making:model'])) {
-    echo "Usage : php console making:controller ou php console making:model\n";
+if (!in_array($command, ['making:controller', 'making:model','making:migration','migrate'])) {
+    echo "Usage : php console making:controller ou php console making:model ou php console making:migration ou migrate \n";
     exit;
 }
 
@@ -114,7 +114,7 @@ class Model {
 
     $modelSpecificTemplate = "<?php
 // app/Models/{$modelName}.php
-
+require 'Model.php';
 class $modelName extends Model {
 $propertiesTemplate
 
@@ -177,10 +177,101 @@ class {$modelName}Repository extends Repository {
     echo "Repository créé : $repositoryFilename\n";
 }
 
+// Fonction de création de migration basée sur le modèle avec du SQL pur
+
+// Fonction de création de migration basée sur le modèle avec du SQL pur
+function createMigrationFromModel() {
+    echo "Entrez le nom du modèle existant (ex: Product) pour générer la migration : ";
+    $handle = fopen("php://stdin", "r");
+    $modelName = trim(fgets($handle));
+    fclose($handle);
+
+    if (empty($modelName)) {
+        echo "Le nom du modèle ne peut pas être vide.\n";
+        exit;
+    }
+
+    $modelFilename = "app/Models/{$modelName}.php";
+
+    // Vérifier si le modèle existe
+    if (!file_exists($modelFilename)) {
+        echo "Erreur : Le modèle $modelName n'existe pas.\n";
+        exit;
+    }
+
+    // Charger le modèle pour récupérer ses propriétés
+    include $modelFilename;
+
+    $reflection = new ReflectionClass($modelName);
+    $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+
+    // Créer le nom de la migration
+    $migrationName = "create_".strtolower($modelName)."_table";
+    $migrationFilename = "database/migrations/{$migrationName}.php";
+
+    // Vérifier si le fichier de migration existe déjà
+    if (file_exists($migrationFilename)) {
+        echo "Erreur : La migration $migrationName existe déjà.\n";
+        exit;
+    }
+
+// Générer le code PHP de la migration avec SQL pur
+$columns = '';
+foreach ($properties as $property) {
+    // Utilisation du nom de la propriété pour créer des colonnes
+    $columns .= "`{$property->getName()}` VARCHAR(255),\n";
+}
+
+// Générer le code PHP pour la migration
+$migrationTemplate = "<?php
+// Migration pour créer la table {$modelName}
+
+class Create{$modelName}Table {
+    public function up(\$pdo) {
+        // Requête SQL pour créer la table
+        \$sql = \"CREATE TABLE IF NOT EXISTS `{$modelName}` (\n\";
+        \$sql .= \"    `id` INT AUTO_INCREMENT PRIMARY KEY,\n\";
+        \$sql .= \"    {$columns}\";
+        \$sql .= \"    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,\n\";
+        \$sql .= \"    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n\";
+        \$sql .= \");\";
+        
+        // Exécution de la requête SQL
+        \$pdo->exec(\$sql);
+        echo 'Table `{$modelName}` créée avec succès.' . PHP_EOL;
+    }
+
+    public function down(\$pdo) {
+        // Requête SQL pour supprimer la table
+        \$sql = \"DROP TABLE IF EXISTS `{$modelName}`;\";
+        \$pdo->exec(\$sql);
+        echo 'Table `{$modelName}` supprimée avec succès.' . PHP_EOL;
+    }
+}
+?>";
+
+
+    // Créer le fichier de migration PHP
+    if (!file_exists('database/migrations')) {
+        mkdir('database/migrations', 0777, true);
+    }
+
+    file_put_contents($migrationFilename, $migrationTemplate);
+    echo "Migration PHP créée : $migrationFilename\n";
+}
+
+
+
 // Exécution de la fonction correspondante en fonction de la commande
 if ($command === 'making:controller') {
     createController();
 } elseif ($command === 'making:model') {
     createModelAndRepository();
+} elseif ($command === 'making:migration') {
+    createMigrationFromModel();
 }
-?>
+elseif ($command === 'migrate') {
+    // Inclure le fichier de migration
+    require_once 'migrate.php';
+    migrate(); // Appeler la fonction migrate
+} 
