@@ -9,7 +9,7 @@
     <link rel="icon" href="/public/assets/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <?php include('app/Views/templates/header.php'); ?>
+    @include('app/Views/templates/header.php')
 
     <main class="form-container">
         <h1 class="form-title">Créer un Nouveau Post</h1>
@@ -64,7 +64,7 @@
         </form>
     </main>
 
-    <?php include('app/Views/templates/footer.php'); ?>
+    @include('app/Views/templates/footer.php')
 
     <script src="../public/assets/js/create.js"></script>
 </body>

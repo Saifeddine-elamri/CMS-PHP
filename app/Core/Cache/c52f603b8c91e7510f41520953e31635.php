@@ -10,7 +10,7 @@
 </head>
 <body>
 
-    <?php include('app/Views/templates/header.php'); ?>
+    <?php include("app/Views/templates/header.php"); ?>
 
     <div class="post-card">
         <!-- Affichage de l'image si disponible -->
@@ -36,7 +36,7 @@
         <a class="back-link" href="/post/list">← Retour à la liste des posts</a>
     </div>
 
-    <?php include('app/Views/templates/footer.php'); ?>
+    <?php include("app/Views/templates/footer.php"); ?>
 
 </body>
 </html>

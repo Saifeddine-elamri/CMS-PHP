@@ -1,7 +1,7 @@
 <?php
-// app/Models/Post.php
+// app/Models/Product.php
 
-class Post extends Model {
+class Product extends Model {
     public $name;
     public $price;
     public $quantity;
