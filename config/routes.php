@@ -6,8 +6,8 @@ Router::add('GET', '/', 'HomeController@index', 'AuthMiddleware@handle');
 
 Router::add('GET', '/post/create', 'HomeController@create', 'RoleMiddleware@handleAdmin');
 Router::add('POST', '/post/create', 'HomeController@create', 'AuthMiddleware@handle');
-Router::add('GET', '/post/{id}', 'HomeController@show', 'AuthMiddleware@handle');
 Router::add('GET', '/post/list', 'HomeController@list', 'AuthMiddleware@handle');
+Router::add('GET', '/post/{id}', 'HomeController@show', 'AuthMiddleware@handle');
 Router::add('GET', '/post/list/{page}', 'HomeController@list', 'AuthMiddleware@handle');
 Router::add('POST', '/post/edit/{id}', 'HomeController@edit', 'RoleMiddleware@handleAdmin');
 Router::add('GET', '/post/edit/{id}', 'HomeController@edit', 'RoleMiddleware@handleAdmin');

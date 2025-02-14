@@ -3,7 +3,6 @@ namespace App\Controllers;
 
 use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
-
 use App\Core\View;
 use App\Middleware\AuthMiddleware;  // Ajout du middleware
 use App\Core\Validator;
@@ -18,14 +17,18 @@ class HomeController {
         $this->postRepository = new PostRepository();
         $this->userRepository = new UserRepository();
 
+
     }
 
     // Méthode pour afficher tous les posts
     public function index() {
         // Vérifie si l'utilisateur est authentifié avant d'afficher les posts
+        $isAdmin = Session::get('user_role') === 'admin';
 
         $posts = $this->postRepository->findAll();  // Récupérer tous les posts
-        View::render('post/index', ['posts' => $posts]);  // Afficher la vue avec les posts
+        View::render('post/index', ['posts' => $posts,
+        'isAdmin' => $isAdmin,
+        'title' => 'Liste des Posts']);  // Afficher la vue avec les posts
     }
 
 public function list($page = 1) {
@@ -45,14 +48,14 @@ public function list($page = 1) {
     }
 
     // Récupérer les posts paginés en passant le paramètre de recherche
-    $posts = $this->postRepository->findPaginated($offset, $postsPerPage, $search);
+    $posts = $this->postRepository->findPaginated($offset, $postsPerPage);
 
     View::render('post/list', [
         'posts' => $posts,
         'isAdmin' => $isAdmin,
         'currentPage' => $currentPage,
         'totalPages' => $totalPages,
-        'search' => $search  // Passer le terme de recherche à la vue
+
     ]);
 }
 
