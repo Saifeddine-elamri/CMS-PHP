@@ -14,9 +14,9 @@ class HomeController {
     protected $postRepository;
     protected $userRepository;
 
-    public function __construct() {
-        $this->postRepository = new PostRepository();
-        $this->userRepository = new UserRepository();
+    public function __construct( PostRepository $postRepository, UserRepository $userRepository) {
+        $this->postRepository = $postRepository;
+        $this->userRepository = $userRepository;
 
 
     }

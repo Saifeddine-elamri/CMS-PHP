@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 // console
 require __DIR__ . '/vendor/autoload.php';

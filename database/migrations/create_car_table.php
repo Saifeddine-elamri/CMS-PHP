@@ -9,8 +9,8 @@ class CreateCarTable {
         $sql .= "    `id` INT AUTO_INCREMENT PRIMARY KEY,
 ";
         $sql .= "    `age` VARCHAR(255),
-`price` VARCHAR(255),
 `color` VARCHAR(255),
+`price` VARCHAR(255),
 ";
         $sql .= "    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
 ";
