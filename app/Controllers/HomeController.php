@@ -1,42 +1,34 @@
 <?php
 namespace App\Controllers;
 
-use App\Repositories\PostRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\PostRepositoryInterface;
 use App\Core\View;
-use App\Middleware\AuthMiddleware;  // Ajout du middleware
+use App\Middleware\AuthMiddleware;  
 use App\Core\Validator;
 use App\Core\Session;
 use App\Core\Http;
 
 class HomeController {
 
-    protected $postRepository;
-    protected $userRepository;
-
-    public function __construct( PostRepository $postRepository, UserRepository $userRepository) {
-        $this->postRepository = $postRepository;
-        $this->userRepository = $userRepository;
-
-
+    public function __construct() {
     }
 
     // Méthode pour afficher tous les posts
-    public function index() {
+    public function index(PostRepositoryInterface $postRepository) {
         // Vérifie si l'utilisateur est authentifié avant d'afficher les posts
         $isAdmin = Session::get('user_role') === 'admin';
 
-        $posts = $this->postRepository->findAll();  // Récupérer tous les posts
+        $posts = $postRepository->findAll();  // Récupérer tous les posts
         View::render('post/index', ['posts' => $posts,
         'isAdmin' => $isAdmin,
         'title' => 'Liste des Posts']);  // Afficher la vue avec les posts
     }
 
-    public function list($page = 1) {
+    public function list(PostRepositoryInterface $postRepository,$page = 1) {
         $isAdmin = Session::get('user_role') === 'admin';
         $postsPerPage = 4;
         $search = isset($_GET['search']) ? $_GET['search'] : '';  // Récupère le paramètre de recherche de l'URL
-        $totalPosts = $this->postRepository->getTotalPosts($search);  // Passe la recherche à la méthode getTotalPosts
+        $totalPosts = $postRepository->getTotalPosts($search);  // Passe la recherche à la méthode getTotalPosts
         $totalPages = ceil($totalPosts / $postsPerPage);
 
         // Si la page actuelle est supérieure au nombre de pages, on la réajuste
@@ -49,7 +41,7 @@ class HomeController {
         }
 
         // Récupérer les posts paginés en passant le paramètre de recherche
-        $posts = $this->postRepository->findPaginated($offset, $postsPerPage);
+        $posts = $postRepository->findPaginated($offset, $postsPerPage);
 
         View::render('post/list', [
             'posts' => $posts,

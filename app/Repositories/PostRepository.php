@@ -3,7 +3,7 @@ namespace App\Repositories;
 
 use App\Core\Database;
 
-class PostRepository {
+class PostRepository implements PostRepositoryInterface {
     protected $db;
 
     // Constructeur pour initialiser la connexion à la base de données

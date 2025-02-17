@@ -1,38 +1,31 @@
 <?php
+
 use App\Core\Router;
 use App\Core\Database;
 use App\Core\Container;
-use App\Controllers\AuthController;
-use App\Services\AuthService;
-use App\Repositories\UserRepository;
 use App\Repositories\PostRepository;
+use App\Repositories\PostRepositoryInterface;
 
-use App\Core\Session;
-use App\Core\Http;
-use App\Core\Validator;
-
+// Charger l'autoload de Composer
 require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . '/config/routes.php';
 
+// Charger la configuration de la base de données
 $config = require __DIR__ . '/config/database.php';
 
+// Initialiser la connexion à la base de données
 Database::init($config);
 
-
+// Créer une instance du conteneur de dépendances
 $container = new Container();
 
-// Pas besoin d'enregistrer chaque service manuellement. Le conteneur le fait automatiquement via `make()`
-$container->set('AuthService', new AuthService());
-$container->set('UserRepository', new UserRepository());
-$container->set('PostRepository', new PostRepository());
+// Associer l'interface à l'implémentation
+$container->set(PostRepositoryInterface::class, new PostRepository());
 
-// Chargement de la base de donné et de routeur
+// Configurer le routeur pour utiliser le conteneur
 Router::setContainer($container);
 
+// Charger les routes depuis le fichier de configuration
+require __DIR__ . '/config/routes.php';
+
+// Démarrer le dispatching des routes
 Router::dispatch();
-
-
-
-
-
-
