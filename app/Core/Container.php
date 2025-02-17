@@ -15,9 +15,7 @@ class Container {
 
     // Enregistre une instance dans le conteneur
     public function set($name, $object) {
-        if (!isset($this->instances[$name])) {
-            $this->instances[$name] = $object;
-        }
+        $this->instances[$name] = $object;
     }
 
     // Récupère une instance à partir du conteneur
@@ -27,13 +25,33 @@ class Container {
             return $this->instances[$name];
         }
 
-        // Vérifie s'il y a une implémentation enregistrée pour l'interface ou la classe abstraite
+        // Vérifie s'il y a un binding manuel
         if (isset($this->bindings[$name])) {
             $name = $this->bindings[$name];
+        }
+        // Auto-binding : Si c'est une interface, essayer de deviner l'implémentation
+        elseif (interface_exists($name)) {
+            $name = $this->resolveImplementation($name);
         }
 
         // Utilise la méthode make pour créer l'instance
         return $this->make($name);
+    }
+
+    // Devine l'implémentation d'une interface
+    protected function resolveImplementation($interface) {
+        // Si l'interface se termine par "Interface", on cherche la classe correspondante
+        if (str_ends_with($interface, 'Interface')) {
+            $implementation = str_replace('Interface', '', $interface);
+
+            // Vérifie si la classe existe
+            if (class_exists($implementation)) {
+                return $implementation;
+            }
+        }
+
+        // Si aucune correspondance n'est trouvée, retourner l'interface telle quelle
+        return $interface;
     }
 
     // Crée une nouvelle instance d'une classe et injecte automatiquement les dépendances
@@ -53,8 +71,8 @@ class Container {
             foreach ($parameters as $parameter) {
                 $dependency = $parameter->getType()?->getName();
 
-                // Si le type est une classe, on la résout via le conteneur
-                if ($dependency && class_exists($dependency)) {
+                // Si le type est une classe ou une interface, on la résout via le conteneur
+                if ($dependency) {
                     $dependencies[] = $this->get($dependency);
                 } elseif ($parameter->isDefaultValueAvailable()) {
                     $dependencies[] = $parameter->getDefaultValue();

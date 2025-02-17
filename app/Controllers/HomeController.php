@@ -1,12 +1,13 @@
 <?php
 namespace App\Controllers;
-
+use App\Repositories\UserRepositoryInterface;
 use App\Repositories\PostRepositoryInterface;
 use App\Core\View;
 use App\Middleware\AuthMiddleware;  
 use App\Core\Validator;
 use App\Core\Session;
 use App\Core\Http;
+use App\Services\FileUploadService;
 
 class HomeController {
 
@@ -17,8 +18,8 @@ class HomeController {
     public function index(PostRepositoryInterface $postRepository) {
         // Vérifie si l'utilisateur est authentifié avant d'afficher les posts
         $isAdmin = Session::get('user_role') === 'admin';
-
-        $posts = $postRepository->findAll();  // Récupérer tous les posts
+        // Récupérer tous les posts
+        $posts = $postRepository->findAll();  
         View::render('post/index', ['posts' => $posts,
         'isAdmin' => $isAdmin,
         'title' => 'Liste des Posts']);  // Afficher la vue avec les posts
@@ -57,10 +58,10 @@ class HomeController {
     
 
     // Méthode pour afficher un post spécifique
-    public function show($id) {
+    public function show($id,PostRepositoryInterface $postRepository) {
         // Vérifie si l'utilisateur est authentifié avant d'afficher un post spécifique
 
-        $post = $this->postRepository->findById($id);  // Récupérer un post par son ID
+        $post = $postRepository->findById($id);  // Récupérer un post par son ID
         if ($post) {
             View::render('post/show', ['post' => $post]);  // Afficher la vue avec un post spécifique
         } else {
@@ -143,27 +144,27 @@ class HomeController {
                 }
             } 
         
-        public function createRender() {
-            $admins = $this->userRepository->getAdmins();  // Méthode pour récupérer les admins
+        public function createRender(UserRepositoryInterface $userRepository) {
+            $admins = $userRepository->getAdmins();  // Méthode pour récupérer les admins
 
             // Afficher le formulaire de création d'un post
             View::render('post/create', ['admins' => $admins]);
         }
 
-        public function editForm($id) {
+        public function editForm($id,PostRepositoryInterface $postRepository) {
             if (Session::get('user_role') !== 'admin') {
                 // Si ce n'est pas un admin, rediriger ou afficher une erreur
                 header('Location: /');
                 exit;
             }
-            $post = $this->postRepository->findById($id);
+            $post = $postRepository->findById($id);
 
             // Afficher le formulaire d'édition avec les données du post
             View::render('post/edit', ['post' => $post]);
         }
 
         #[Http('POST')]
-        public function edit($id) {
+        public function edit($id,PostRepositoryInterface $postRepository,FileUploadService $fileUploadService) {
             // Vérifie si l'utilisateur est authentifié et est un admin
             if (Session::get('user_role') !== 'admin') {
                 // Si ce n'est pas un admin, rediriger ou afficher une erreur
@@ -172,8 +173,7 @@ class HomeController {
             }
         
             // Récupérer le post par son ID pour l'afficher dans le formulaire d'édition
-            $post = $this->postRepository->findById($id);
-        
+            $post = $postRepository->findById($id);     
             if (!$post) {
                 // Si le post n'existe pas, rediriger vers la liste des posts
                 header('Location: /post/list');
@@ -186,11 +186,11 @@ class HomeController {
                     'title' => $_POST['title'],
                     'content' => $_POST['content'],
                     // Gérer l'upload du fichier (image ou PDF)
-                    'file_path' => isset($_FILES['file']) ? $this->handleFileUpload($_FILES['file']) : $post['file_path'], // Gérer l'upload du fichier
+                    'file_path' => isset($_FILES['file']) ?  $fileUploadService->upload($_FILES['file']) : $post['file_path'], // Gérer l'upload du fichier
                 ];
         
                 // Mettre à jour le post dans la base de données
-                $this->postRepository->update($id, $updatedData);
+                $postRepository->update($id, $updatedData);
         
                 // Rediriger vers la page des posts après la mise à jour
                 header('Location: /post/list');
@@ -225,10 +225,10 @@ class HomeController {
 
     // Méthode pour supprimer un post
     #[Http('POST')]
-    public function delete($id) {
+    public function delete($id,PostRepositoryInterface $postRepository) {
         // Vérifie si l'utilisateur est authentifié avant de permettre la suppression
 
-        $affectedRows = $this->postRepository->delete($id);  // Supprimer le post dans la base de données
+        $affectedRows = $postRepository->delete($id);  // Supprimer le post dans la base de données
         // Redirection après suppression
         header('Location: /post/list');
         exit;

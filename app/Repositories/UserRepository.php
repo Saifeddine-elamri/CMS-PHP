@@ -3,7 +3,7 @@ namespace App\Repositories;
 
 use App\Core\Database;
 
-class UserRepository {
+class UserRepository implements UserRepositoryInterface {
 
     protected $db;
 

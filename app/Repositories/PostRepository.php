@@ -47,18 +47,34 @@ class PostRepository implements PostRepositoryInterface {
 
 
 
-    // Met à jour un post existant
-    public function update($id, array $data) {
-        $stmt = $this->db->prepare('UPDATE posts SET title = ?, content = ?, author_id = ?, created_at = ? WHERE id = ?');
-        $stmt->execute([
-            $data['title'],
-            $data['content'],
-            $data['author_id'],
-            $data['created_at'],
-            $id
-        ]);
-        return $stmt->rowCount();
-    }
+        // Met à jour un post existant
+        public function update($id, array $data) {
+            // Commencer la requête SQL
+            $sql = 'UPDATE posts SET title = ?, content = ?';
+            $params = [
+                $data['title'],
+                $data['content']
+            ];
+
+            // Si file_path est présent dans les données, on l'ajoute à la requête
+            if (isset($data['file_path'])) {
+                $sql .= ', file_path = ?';
+                $params[] = $data['file_path'];
+            }
+
+            // Continuer avec les autres champs
+            $sql .= ', author_id = ?, created_at = ? WHERE id = ?';
+            $params[] = $data['author_id'];
+            $params[] = $data['created_at'];
+            $params[] = $id;
+
+            // Préparer et exécuter la requête
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+
+            return $stmt->rowCount();
+        }
+
 
     // Supprime un post par son ID
     public function delete($id) {

@@ -4,18 +4,15 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Core\View;
 use App\Services\AuthService;
-use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 use App\Core\Session;
 use App\Core\Http;
 
 class AuthController {
 
-    protected $authService;
-    protected $userRepository;
 
     public function __construct() {
-        $this->authService = new AuthService();
-        $this->userRepository = new UserRepository();
+     
     }
 
     // Méthode pour afficher le formulaire de connexion
@@ -25,14 +22,14 @@ class AuthController {
 
     // Méthode pour traiter la connexion de l'utilisateur
     #[Http('POST')]
-    public function login() {
+    public function login(AuthService $authService) {
         $errorMessage = ''; // Variable pour le message d'erreur
 
             $username = $_POST['username'];
             $password = $_POST['password'];
 
             // Authentifier l'utilisateur
-            if ($this->authService->login($username, $password)) {
+            if ($authService->login($username, $password)) {
                 // Vérifie si une URL de redirection est définie
                 $redirectUrl = Session::get('redirect_url');
                 
@@ -55,8 +52,8 @@ class AuthController {
     }
 
     // Méthode pour déconnecter l'utilisateur
-    public function logout() {
-        $this->authService->logout();
+    public function logout(AuthService $authService) {
+        $authService->logout();
     }
 
     // Méthode pour afficher le formulaire d'inscription
@@ -66,7 +63,7 @@ class AuthController {
 
     // Méthode pour traiter l'inscription de l'utilisateur
     #[Http('POST')]
-    public function register() {
+    public function register(UserRepositoryInterface $userRepository,AuthService $authService) {
             $username = $_POST['username'];
             $password = $_POST['password'];
             $confirmPassword = $_POST['confirm_password'];
@@ -78,7 +75,7 @@ class AuthController {
             }
 
             // Vérifier si l'utilisateur existe déjà
-            if ($this->userRepository->findByUsername($username)) {
+            if ($userRepository->findByUsername($username)) {
                 echo "Nom d'utilisateur déjà pris.";
                 return;
             }
@@ -91,10 +88,10 @@ class AuthController {
             ];
 
             // Sauvegarder le nouvel utilisateur en base de données
-            $this->userRepository->create($userData);
+            $userRepository->create($userData);
 
             // Authentifier l'utilisateur après l'enregistrement
-            $this->authService->login($username, $password);
+            $authService->login($username, $password);
 
             // Rediriger l'utilisateur vers son tableau de bord après l'enregistrement
             header('Location: /');

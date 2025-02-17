@@ -6,15 +6,32 @@ use ReflectionParameter;
 use App\Core\Http;
 
 class Router {
+    // Singleton
+    private static $instance;
+    protected static $container;
     // Propriété statique pour stocker les routes
     protected static $routes = [];
-    protected static $container;
+    
+    // Constructeur privé pour éviter l'instanciation externe
+    private function __construct() {
+        // Initialisation automatique du conteneur si non déjà défini
+        if (!self::$container) {
+            self::$container = new Container();
+        }
+    }
 
-    // Configure le conteneur
+    // Récupérer l'instance unique du Router
+    public static function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    // Permet de définir un conteneur personnalisé si nécessaire
     public static function setContainer($container) {
         self::$container = $container;
     }
-
     // Récupère toutes les routes
     public static function getRoutes() {
         return self::$routes;
@@ -39,6 +56,8 @@ class Router {
     }
 
     public static function dispatch() {
+        // Initialisation automatique via Singleton
+        self::getInstance();
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
